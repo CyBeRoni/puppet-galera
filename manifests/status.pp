@@ -78,6 +78,9 @@ class galera::status (
     before  => Anchor['mysql::server::end'],
   }
 
+  if (!defined(Class['xinetd'])){
+    class { 'xinetd': }
+  }
   xinetd::service { 'mysqlchk':
     server                  => '/usr/local/bin/clustercheck',
     port                    => $port,

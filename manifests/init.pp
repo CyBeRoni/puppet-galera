@@ -209,14 +209,16 @@ class galera(
     # If there are no other servers up and we are the master, the cluster
     # needs to be bootstrapped. This happens before the service is managed
     $server_list = join($galera_servers, ' ')
-    exec { 'bootstrap_galera_cluster':
-      command   => $galera::params::bootstrap_command,
-      onlyif    => "ret=1; for i in ${server_list}; do nc -z \$i ${wsrep_group_comm_port}; if [ \"\$?\" = \"0\" ]; then ret=0; fi; done; /bin/echo \$ret | /bin/grep 1 -q",
-      require   => Class['mysql::server::config'],
-      before    => [Class['mysql::server::service'], Service['mysqld']],
-      provider  => shell,
-      path      => '/usr/bin:/bin:/usr/sbin:/sbin'
-    }
 
+    # Drop in an init script that will detect no servers are running and 
+    # run with the bootstrap command
+    file {"/etc/init.d/mysql":
+      ensure  => present,
+      content => template('galera/mysql-init.erb'),
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      before  => [Class['mysql::server::service'], Service['mysqld']],
+    }
   }
 }

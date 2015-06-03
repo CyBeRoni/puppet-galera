@@ -217,7 +217,7 @@ class galera(
       content => template('galera/mysql-init.erb'),
       owner   => 'root',
       group   => 'root',
-      mode    => '0644',
+      mode    => '0755',
       before  => [Class['mysql::server::service'], Service['mysqld']],
     }
   }

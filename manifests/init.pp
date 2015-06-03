@@ -182,7 +182,7 @@ class galera(
   }
 
   if $galera::params::additional_packages {
-    if (!defined(Package[$galera::params::additional_packages]) {
+    if (!defined(Package[$galera::params::additional_packages])) {
       package{ $galera::params::additional_packages:
         ensure    => $package_ensure,
         require   => Anchor['mysql::server::start'],

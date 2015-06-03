@@ -15,11 +15,11 @@ class galera::repo(
   $apt_percona_repo_key_server = 'keys.gnupg.net',
   $apt_percona_repo_include_src = false,
 
-  # Ubuntu/mariadb
-  $apt_mariadb_repo_location = 'http://mirror.aarnet.edu.au/pub/MariaDB/repo/5.5/ubuntu',
-  $apt_mariadb_repo_release = $::lsbdistcodename,
+  # Debian/mariadb
+  $apt_mariadb_repo_location = 'http://ftp.nluug.nl/db/mariadb/repo/10.0/debian',
+  $apt_mariadb_repo_release = $::lsbdistcodename ? { 'jessie' => 'sid', default => $::lsbdistcodename },
   $apt_mariadb_repo_repos = 'main',
-  $apt_mariadb_repo_key = '1BB943DB',
+  $apt_mariadb_repo_key = '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
   $apt_mariadb_repo_key_server = 'keys.gnupg.net',
   $apt_mariadb_repo_include_src = false,
 
@@ -48,25 +48,23 @@ class galera::repo(
 
   case $::osfamily {
     'Debian': {
-      if $::operatingsystem == 'Ubuntu' {
-        if ($repo_vendor == 'percona') {
-          apt::source { 'galera_percona_repo':
-            location          => $apt_percona_repo_location,
-            release           => $apt_percona_repo_release,
-            repos             => $apt_percona_repo_repos,
-            key               => $apt_percona_repo_key,
-            key_server        => $apt_percona_repo_key_server,
-            include_src       => $apt_percona_repo_include_src,
-          }
-        } elsif ($repo_vendor == 'mariadb') {
-          apt::source { 'galera_mariadb_repo':
-            location          => $apt_mariadb_repo_location,
-            release           => $apt_mariadb_repo_release,
-            repos             => $apt_mariadb_repo_repos,
-            key               => $apt_mariadb_repo_key,
-            key_server        => $apt_mariadb_repo_key_server,
-            include_src       => $apt_mariadb_repo_include_src,
-          }
+      if ($repo_vendor == 'percona') {
+        apt::source { 'galera_percona_repo':
+          location          => $apt_percona_repo_location,
+          release           => $apt_percona_repo_release,
+          repos             => $apt_percona_repo_repos,
+          key               => $apt_percona_repo_key,
+          key_server        => $apt_percona_repo_key_server,
+          include_src       => $apt_percona_repo_include_src,
+        }
+      } elsif ($repo_vendor == 'mariadb') {
+        apt::source { 'galera_mariadb_repo':
+          location          => $apt_mariadb_repo_location,
+          release           => $apt_mariadb_repo_release,
+          repos             => $apt_mariadb_repo_repos,
+          key               => $apt_mariadb_repo_key,
+          key_server        => $apt_mariadb_repo_key_server,
+          include_src       => $apt_mariadb_repo_include_src,
         }
       }
       if ($repo_vendor == 'osp5') {

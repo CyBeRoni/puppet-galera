@@ -102,7 +102,6 @@ mysqld_status () {
 case "${1:-''}" in
   'start')
 	sanity_checks;
-    check_bootstrap && BOOTSTRAP="<%= scope.lookupvar('galera::params::bootstrap_command') %>"
 	# Start daemon
 	log_daemon_msg "Starting MariaDB database server" "mysqld"
 	if mysqld_status check_alive nowarn; then
@@ -111,6 +110,11 @@ case "${1:-''}" in
 	else
 	    # Could be removed during boot
 	    test -e /var/run/mysqld || install -m 755 -o mysql -g root -d /var/run/mysqld
+
+        if [ check_bootstrap ]; then
+            echo -e "\nNo cluster nodes running, bootstrapping new cluster"
+            BOOTSTRAP="<%= scope.lookupvar('galera::params::bootstrap_command') %>"
+        fi
 
 	    # Start MariaDB! 
   	    /usr/bin/mysqld_safe $BOOTSTRAP "${@:2}" > /dev/null 2>&1 &

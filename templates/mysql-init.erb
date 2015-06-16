@@ -40,7 +40,9 @@ export HOME=/etc/mysql/
 BOOTSTRAP=""
 check_bootstrap(){
 	ret=1; 
-	for i in <%= @server_list %>; do nc -w 2 -z $i <%= @wsrep_group_comm_port %> && ret=0; done; /bin/echo $ret | /bin/grep 1 -q
+    echo -e "\nChecking running servers"
+    for i in <%= @server_list %>; do echo -n "Checking ${i}... "; nc -w 2 -z $i <%= @wsrep_group_comm_port %> && ( echo running. && ret=0 ); done;
+    return $ret
 }
 
 ## Fetch a particular option from mysql's invocation.
@@ -111,8 +113,8 @@ case "${1:-''}" in
 	    # Could be removed during boot
 	    test -e /var/run/mysqld || install -m 755 -o mysql -g root -d /var/run/mysqld
 
-        if [ check_bootstrap ]; then
-            echo -e "\nNo cluster nodes running, bootstrapping new cluster"
+        if check_bootstrap; then
+            echo "No cluster nodes running, bootstrapping new cluster"
             BOOTSTRAP="<%= scope.lookupvar('galera::params::bootstrap_command') %>"
         fi
 

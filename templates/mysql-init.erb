@@ -37,6 +37,7 @@ umask 077
 # so break my scripts.
 export HOME=/etc/mysql/
 
+BOOTSTRAP=""
 check_bootstrap(){
 	ret=1; 
 	for i in <%= @server_list %>; do nc -w 2 -z $i <%= @wsrep_group_comm_port %> && ret=0; done; /bin/echo $ret | /bin/grep 1 -q

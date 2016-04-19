@@ -17,7 +17,7 @@ class galera::repo(
 
   # Debian/mariadb
   $apt_mariadb_repo_location = 'http://ftp.nluug.nl/db/mariadb/repo/10.0/debian',
-  $apt_mariadb_repo_release = $::lsbdistcodename ? { 'jessie' => 'sid', default => $::lsbdistcodename },
+  $apt_mariadb_repo_release = $::lsbdistcodename,
   $apt_mariadb_repo_repos = 'main',
   $apt_mariadb_repo_key = '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
   $apt_mariadb_repo_key_server = 'keys.gnupg.net',
